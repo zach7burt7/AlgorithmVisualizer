@@ -2,10 +2,10 @@
 Welcome to Algorithm Visualizer, a Java-based GUI application that helps understand and visualize pathfinding, and eventually sorting algorithms. This project is built using Swing and designed to offer an interactive learning experience for students.
 
 ## Features:
-Visualize the step-by-step process of:
-BFS (Breadth-First Search)
-DFS (Depth-First Search)
-(Planned: A* Algorithm, Dijkstras Algorithm)
+Visualize the step-by-step process of:  
+BFS (Breadth-First Search)  
+DFS (Depth-First Search)  
+(Planned: A* Algorithm, Dijkstras Algorithm  
 
 ## Create customizable maps with:
 Start node
