@@ -3,6 +3,9 @@ Welcome to Algorithm Visualizer, a Java-based GUI application that helps underst
 
 
 
+
+
+
 Features:
 
 Visualize the step-by-step process of:
@@ -12,6 +15,9 @@ BFS (Breadth-First Search)
 DFS (Depth-First Search)
 
 (Planned: A* Algorithm, Dijkstras Algorithm)
+
+
+
 
 
 
