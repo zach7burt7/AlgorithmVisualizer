@@ -33,8 +33,8 @@ An IDE (like IntelliJ IDEA, Eclipse)
 
 ## Clone repository:  
 In Command Prompt, navigate to the directory you would like to clone this project to, then copy this command.  
-git clone https://github.com/zach7burt7/AlgorithmVizualizer.git  
-cd AlgorithmVizualizer  
+`git clone https://github.com/zach7burt7/AlgorithmVizualizer.git  `
+`cd AlgorithmVizualizer  `
 
 
 ## Author  
