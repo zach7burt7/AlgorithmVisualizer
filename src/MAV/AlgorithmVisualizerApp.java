@@ -13,7 +13,8 @@ import java.util.Stack;
 
 // Main application using CardLayout for different views
 public class AlgorithmVisualizerApp {
-    // Names for each card
+	
+	// Cards
     public static final String HOME_CARD = "home";
     public static final String PATHFINDING_CARD = "pathfinding";
     public static final String SORTING_CARD = "sorting";
@@ -23,13 +24,13 @@ public class AlgorithmVisualizerApp {
     private CardLayout cardLayout;
 
     public AlgorithmVisualizerApp() {
-        // Set up the main frame
+        // Main Frame
         frame = new JFrame("Algorithm Visualizer App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 800);
         frame.setLocationRelativeTo(null);
 
-        // Create the CardLayout container
+        // CardLayout container
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
@@ -41,7 +42,7 @@ public class AlgorithmVisualizerApp {
         AlgorithmVizualizerPanel pathfindingPanel = new AlgorithmVizualizerPanel(this);
         mainPanel.add(pathfindingPanel, PATHFINDING_CARD);
 
-        // Create and add the Sorting Visualizer panel (as a placeholder)
+        // Create and add the Sorting Visualizer panel.
         SortingPanel sortingPanel = new SortingPanel(this);
         mainPanel.add(sortingPanel, SORTING_CARD);
 
@@ -60,7 +61,7 @@ public class AlgorithmVisualizerApp {
     }
 }
 
-// Home page with two navigation buttons
+// Home page
 class HomePanel extends JPanel {
     private AlgorithmVisualizerApp app;
 
@@ -76,7 +77,6 @@ class HomePanel extends JPanel {
         JButton pathfindingButton = new JButton("Pathfinding Visualizer");
         JButton sortingButton = new JButton("Sorting Visualizer");
 
-        // Navigate to the respective panels when the buttons are clicked
         pathfindingButton.addActionListener(e -> app.showCard(AlgorithmVisualizerApp.PATHFINDING_CARD));
         sortingButton.addActionListener(e -> app.showCard(AlgorithmVisualizerApp.SORTING_CARD));
 
@@ -86,7 +86,7 @@ class HomePanel extends JPanel {
     }
 }
 
-// A simple placeholder for the Sorting Visualizer
+// Sorting Page
 class SortingPanel extends JPanel {
     private AlgorithmVisualizerApp app;
 
@@ -106,8 +106,7 @@ class SortingPanel extends JPanel {
     }
 }
 
-// This panel is a modified version of your AlgorithmVizualizer class refactored to extend JPanel.
-// It contains your pathfinding visualizer along with an added "Home" button.
+// Pathfinding Page
 class AlgorithmVizualizerPanel extends JPanel {
     private AlgorithmVisualizerApp app;
     // Primitive Variables
@@ -146,11 +145,10 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JComboBox<String> algorithmDropDownMenu = new JComboBox<>(algorithm);
     private JButton startAlgButton = new JButton("Start Search");
     private JButton resetButton = new JButton("Reset Map");
-    // Added home button for navigation back to home page.
     private JButton homeButton = new JButton("Home");
     private JSlider mapDensitySlider = new JSlider(1, 7, 4);
 
-    // Flag
+    // Flags
     private boolean solving = false;
 
     public AlgorithmVizualizerPanel(AlgorithmVisualizerApp app) {
@@ -257,10 +255,9 @@ class AlgorithmVizualizerPanel extends JPanel {
             }
         });
 
-        // Home button listener returns the user to the Home page
+        //Return to home page
         homeButton.addActionListener(e -> app.showCard(AlgorithmVisualizerApp.HOME_CARD));
 
-        // Start the search in a separate thread if needed
         new Thread(() -> startSearch()).start();
     }
 
@@ -290,12 +287,12 @@ class AlgorithmVizualizerPanel extends JPanel {
         }
     }
 
-    // Reset flag(s)
+    // Reset flag
     public void reset() {
         solving = false;
     }
 
-    // Delay method (for animation)
+    // Delay method
     public void delay() {
         try {
             Thread.sleep(delay);
@@ -310,9 +307,8 @@ class AlgorithmVizualizerPanel extends JPanel {
                     alg.BFS();
                 } else if (currAlg == 1) {
                     alg.DFS();
-                } // else if (currAlg == 2) { /* A* implementation */ }
+                } // else if (currAlg == 2) { TD: A* implementation  }
             }
-            // Pause briefly before re-checking
             try {
                 Thread.sleep(10);
             } catch (InterruptedException ex) { }
@@ -343,7 +339,7 @@ class AlgorithmVizualizerPanel extends JPanel {
         repaint();
     }
 
-    // Inner class: Node (unchanged from your original implementation)
+    // Node Class
     class Node {
         private int cellType;
         private int hops, x, y, lastX, lastY;
@@ -384,7 +380,7 @@ class AlgorithmVizualizerPanel extends JPanel {
         }
     }
 
-    // Inner class: Map panel that handles drawing and mouse events
+    // Map class handles actions on the Grid and Painting components
     class Map extends JPanel implements MouseListener, MouseMotionListener {
         public Map() {
             addMouseListener(this);
@@ -489,8 +485,9 @@ class AlgorithmVizualizerPanel extends JPanel {
         @Override public void mouseMoved(MouseEvent e) { }
     }
 
-    // Inner class: Algorithms (includes BFS and DFS implementations)
+    // Alogirthm Implementaions
     public class Algorithms {
+    	
         public void DFS() {
             if (startX < 0 || startY < 0 || endX < 0 || endY < 0) {
                 return;
