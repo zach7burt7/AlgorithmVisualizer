@@ -7,8 +7,13 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Stack;
 
 // Main application using CardLayout for different views
@@ -110,7 +115,8 @@ class SortingPanel extends JPanel {
 class AlgorithmVizualizerPanel extends JPanel {
     private AlgorithmVisualizerApp app;
     // Primitive Variables
-    private int delay = 8;
+    
+    private int delay = 5;
     private int WIDTH = 1200;
     private int endX = -1;
     private int endY = -1;
@@ -123,8 +129,8 @@ class AlgorithmVizualizerPanel extends JPanel {
     private int mapHeight = 600;
     private String[] tools = {"Start", "End", "Wall", "Eraser"};
     private String[] algorithm = {"BFS", "DFS", "A*"};
-    private int dRow[] = { 0, 1, 0, -1 };
-    private int dCol[] = { -1, 0, 1, 0 };
+    private final int[] dRow = { -1, 1, 0, 0 };
+    private final int[] dCol = { 0, 0, -1, 1 };
 
     // Panels and Controls
     private JPanel controlPanel;
@@ -146,10 +152,15 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JButton startAlgButton = new JButton("Start Search");
     private JButton resetButton = new JButton("Reset Map");
     private JButton homeButton = new JButton("Home");
+    private JButton generateMazeButton = new JButton("Generate Maze");
     private JSlider mapDensitySlider = new JSlider(1, 7, 4);
 
     // Flags
     private boolean solving = false;
+    
+    //Tools
+    Random rand = new Random();
+  
 
     public AlgorithmVizualizerPanel(AlgorithmVisualizerApp app) {
         this.app = app;
@@ -183,6 +194,7 @@ class AlgorithmVizualizerPanel extends JPanel {
         BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), ""));
         controlPanel.add(startAlgButton);
         controlPanel.add(resetButton);
+        controlPanel.add(generateMazeButton);
         controlPanel.add(toolDropDownMenu);
         controlPanel.add(algorithmDropDownMenu);
     
@@ -254,6 +266,14 @@ class AlgorithmVizualizerPanel extends JPanel {
                 update();
             }
         });
+        
+        generateMazeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generateMap();
+                update();
+            }
+        });
 
         //Return to home page
         homeButton.addActionListener(e -> app.showCard(AlgorithmVisualizerApp.HOME_CARD));
@@ -285,6 +305,75 @@ class AlgorithmVizualizerPanel extends JPanel {
                 }
             }
         }
+    }
+    
+    private void carveMaze(int x, int y) {
+        if (map[x][y].getType() != 0 && map[x][y].getType() != 1) {
+            map[x][y].setType(2); // Path
+        }
+
+        int[] dirX = {0, 0, -1, 1};
+        int[] dirY = {-1, 1, 0, 0};
+
+        List<Integer> shuffled = new ArrayList<>();
+        shuffled.add(0);
+        shuffled.add(1);
+        shuffled.add(2);
+        shuffled.add(3);
+        Collections.shuffle(shuffled);
+
+        for (int dir : shuffled) {
+            int nx = x + dirX[dir] * 2;
+            int ny = y + dirY[dir] * 2;
+
+            if (nx > 0 && ny > 0 && nx < cells - 1 && ny < cells - 1) {
+                if (map[nx][ny].getType() == 3) {
+                    int wallX = x + dirX[dir];
+                    int wallY = y + dirY[dir];
+
+                    if (map[wallX][wallY].getType() != 0 && map[wallX][wallY].getType() != 1) {
+                        map[wallX][wallY].setType(2); // Carve tunnel
+
+                    }
+
+                    carveMaze(nx, ny);
+                }
+            }
+        }
+    }
+
+    
+    public void generateMap() {
+        clearMap();
+
+        // Fill map with walls first
+        for (int x = 0; x < cells; x++) {
+            for (int y = 0; y < cells; y++) {
+                if (x == 0 || y == 0 || x == cells - 1 || y == cells - 1) {
+                    map[x][y].setType(2); // Outer edge = solid wall (type 2)
+                } else {
+                    int type = map[x][y].getType();
+                    if (type != 0 && type != 1) {
+                        map[x][y].setType(3); // Inner cells = regular wall (type 3)
+                    }
+                }
+            }
+        }
+        // Start carving maze from a random odd cell
+        Random rand = new Random();
+        int startX = rand.nextInt(cells / 2) * 2 + 1;
+        int startY = rand.nextInt(cells / 2) * 2 + 1;
+        
+        // Make sure it's not the start or end
+        if (map[startX][startY].getType() == 0 || map[startX][startY].getType() == 1) {
+            startX = 1;
+            startY = 1;
+        }
+
+        carveMaze(startX, startY);
+
+        update(); 
+       
     }
 
     // Reset flag
