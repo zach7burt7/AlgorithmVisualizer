@@ -115,7 +115,6 @@ class SortingPanel extends JPanel {
 class AlgorithmVizualizerPanel extends JPanel {
     private AlgorithmVisualizerApp app;
     // Primitive Variables
-    
     private int delay = 5;
     private int WIDTH = 1200;
     private int endX = -1;
@@ -270,7 +269,7 @@ class AlgorithmVizualizerPanel extends JPanel {
         generateMazeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                generateMap();
+            	generateMapp(0.35);
                 update();
             }
         });
@@ -294,6 +293,20 @@ class AlgorithmVizualizerPanel extends JPanel {
             }
         }
         reset();
+    }
+    
+    public void generateMapp(double density) {
+    	resetMap();
+    	for(int x = 0; x < cells; x++) {
+    		for (int y = 0; y < cells; y++) {
+    			if(rand.nextDouble() < density && map[x][y].getType() != 1 && map[x][y].getType() != 0) {
+    		
+    				map[x][y].setType(2);
+    				
+    				
+    			}
+    		}
+     	}
     }
 
     // Resets visited nodes (but not walls, start, or end)
@@ -349,16 +362,13 @@ class AlgorithmVizualizerPanel extends JPanel {
         // Fill map with walls first
         for (int x = 0; x < cells; x++) {
             for (int y = 0; y < cells; y++) {
-                if (x == 0 || y == 0 || x == cells - 1 || y == cells - 1) {
-                    map[x][y].setType(2); // Outer edge = solid wall (type 2)
-                } else {
-                    int type = map[x][y].getType();
-                    if (type != 0 && type != 1) {
-                        map[x][y].setType(3); // Inner cells = regular wall (type 3)
-                    }
+                int type = map[x][y].getType();
+                if (type != 0 && type != 1) {
+                    map[x][y].setType(3); // Wall
                 }
             }
         }
+
         // Start carving maze from a random odd cell
         Random rand = new Random();
         int startX = rand.nextInt(cells / 2) * 2 + 1;
