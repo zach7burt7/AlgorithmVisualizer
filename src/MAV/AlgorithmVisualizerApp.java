@@ -126,6 +126,7 @@ class AlgorithmVizualizerPanel extends JPanel {
     private int currTool = 0;
     private int currAlg = 0;
     private int mapHeight = 600;
+    private double density = 0.3;
     private String[] tools = {"Start", "End", "Wall", "Eraser"};
     private String[] algorithm = {"BFS", "DFS", "A*"};
     private final int[] dRow = { -1, 1, 0, 0 };
@@ -135,7 +136,8 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JPanel controlPanel;
     private JPanel titlePanel;
     private JPanel mapPanel;
-    private JLabel densityValueLabel = new JLabel(cells + "x" + cells);
+    private JLabel densityValueLabel = new JLabel(cells + " x " + cells);
+    private JLabel mazeDensityValueLabel = new JLabel((int)(density * 100) + "%");
     private Node[][] map;
     private Algorithms alg = new Algorithms();
 
@@ -153,6 +155,7 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JButton homeButton = new JButton("Home");
     private JButton generateMazeButton = new JButton("Generate Maze");
     private JSlider mapDensitySlider = new JSlider(1, 7, 4);
+    private JSlider mazeDensitySlider = new JSlider(1, 5, 3);
 
     // Flags
     private boolean solving = false;
@@ -198,7 +201,7 @@ class AlgorithmVizualizerPanel extends JPanel {
         controlPanel.add(algorithmDropDownMenu);
     
 
-        // Map Density Slider Setup (optional)
+        // Map Density Slider Setup
         mapDensitySlider.setMajorTickSpacing(10);
         JPanel densityPanel = new JPanel();
         densityPanel.setPreferredSize(new Dimension(100, 50));
@@ -210,7 +213,23 @@ class AlgorithmVizualizerPanel extends JPanel {
         densityPanel.add(mapDensityTitle);
         densityPanel.add(mapDensitySlider);
         densityPanel.add(densityValueLabel);
+        
+        //Maze Density Slider Setup
+        mazeDensitySlider.setMajorTickSpacing(10);
+        JPanel mazeDensityPanel = new JPanel();
+        mazeDensityPanel.setPreferredSize(new Dimension(100, 50));
+        mazeDensityPanel.setLayout(new BoxLayout(mazeDensityPanel, BoxLayout.Y_AXIS));
+        JLabel mazeDensityTitle = new JLabel("Maze Density");
+        mazeDensityTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mazeDensitySlider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mazeDensityValueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mazeDensityPanel.add(mazeDensityTitle);
+        mazeDensityPanel.add(mazeDensitySlider);
+        mazeDensityPanel.add(mazeDensityValueLabel);
+        
+        controlPanel.add(mazeDensityPanel);
         controlPanel.add(densityPanel);
+    
 
         add(controlPanel);
         
@@ -259,6 +278,7 @@ class AlgorithmVizualizerPanel extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 cells = mapDensitySlider.getValue() * 10;
+                densityValueLabel.setText(cells + " x " + cells);
                 clearMap();
                 resetMap();
                 cellSize = Math.min(mapPanel.getWidth() / cells, mapPanel.getHeight() / cells);
@@ -266,10 +286,22 @@ class AlgorithmVizualizerPanel extends JPanel {
             }
         });
         
+        mazeDensitySlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                density = mazeDensitySlider.getValue() * 0.15;
+                mazeDensityValueLabel.setText((int)(density * 100) + "%");
+                resetMap();
+                generateMapp(density);
+                update();
+            }
+        });
+        
+        
         generateMazeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	generateMapp(0.35);
+            	generateMapp(density);
                 update();
             }
         });
@@ -435,6 +467,7 @@ class AlgorithmVizualizerPanel extends JPanel {
 
     // Calls repaint on the panel
     public void update() {
+    	
         repaint();
     }
 
