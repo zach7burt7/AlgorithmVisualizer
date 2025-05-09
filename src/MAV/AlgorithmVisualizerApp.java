@@ -1,4 +1,4 @@
-package MAV;
+
 
 import java.awt.*;
 import java.awt.color.ColorSpace;
@@ -115,7 +115,7 @@ class SortingPanel extends JPanel {
 class AlgorithmVizualizerPanel extends JPanel {
     private AlgorithmVisualizerApp app;
     // Primitive Variables
-    private int delay = 5;
+    private int delay = 3;
     private int WIDTH = 1200;
     private int endX = -1;
     private int endY = -1;
@@ -138,6 +138,7 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JPanel mapPanel;
     private JLabel densityValueLabel = new JLabel(cells + " x " + cells);
     private JLabel mazeDensityValueLabel = new JLabel((int)(density * 100) + "%");
+    private JLabel searchSpeedValueLabel = new JLabel(delay + "");
     private Node[][] map;
     private Algorithms alg = new Algorithms();
 
@@ -156,6 +157,7 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JButton generateMazeButton = new JButton("Generate Maze");
     private JSlider mapDensitySlider = new JSlider(1, 7, 4);
     private JSlider mazeDensitySlider = new JSlider(1, 5, 3);
+    private JSlider searchSpeedSlider = new JSlider(1, 5, 3);
 
     // Flags
     private boolean solving = false;
@@ -227,8 +229,22 @@ class AlgorithmVizualizerPanel extends JPanel {
         mazeDensityPanel.add(mazeDensitySlider);
         mazeDensityPanel.add(mazeDensityValueLabel);
         
+        //Algorithm Search Speed Slider
+        searchSpeedSlider.setMajorTickSpacing(10);
+        JPanel searchSpeedPanel = new JPanel();
+        searchSpeedPanel.setPreferredSize(new Dimension(100, 50));
+        searchSpeedPanel.setLayout(new BoxLayout(searchSpeedPanel, BoxLayout.Y_AXIS));
+        JLabel searchSpeedTitle = new JLabel("Search Speed");
+        searchSpeedTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        searchSpeedSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        searchSpeedValueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        searchSpeedPanel.add(searchSpeedTitle);
+        searchSpeedPanel.add(searchSpeedSlider);
+        searchSpeedPanel.add(searchSpeedValueLabel);
+        
         controlPanel.add(mazeDensityPanel);
         controlPanel.add(densityPanel);
+        controlPanel.add(searchSpeedPanel);
     
 
         add(controlPanel);
@@ -297,6 +313,18 @@ class AlgorithmVizualizerPanel extends JPanel {
             }
         });
         
+        searchSpeedSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+            	   int min = searchSpeedSlider.getMinimum();
+            	    int max = searchSpeedSlider.getMaximum();
+            	    int speed = searchSpeedSlider.getValue();
+            	    delay = (max + min) - speed;
+            	    searchSpeedValueLabel.setText(String.valueOf(delay));
+            	    searchSpeedValueLabel.setText(String.valueOf(speed));
+            	    update();
+            }
+        });
         
         generateMazeButton.addActionListener(new ActionListener() {
             @Override
@@ -305,6 +333,8 @@ class AlgorithmVizualizerPanel extends JPanel {
                 update();
             }
         });
+        
+        
 
         //Return to home page
         homeButton.addActionListener(e -> app.showCard(AlgorithmVisualizerApp.HOME_CARD));
