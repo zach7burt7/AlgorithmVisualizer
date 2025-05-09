@@ -484,12 +484,6 @@ class AlgorithmVizualizerPanel extends JPanel {
             this.hops = -1;
         }
 
-        public double getEuclidDist() {
-            int xdif = Math.abs(x - endX);
-            int ydif = Math.abs(y - endY);
-            distToEnd = Math.sqrt((xdif * xdif) + (ydif * ydif));
-            return distToEnd;
-        }
 
         public int getX() { return x; }
         public int getY() { return y; }
