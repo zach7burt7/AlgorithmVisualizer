@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
+import java.util.PriorityQueue;
+import java.util.Comparator;
 
 // Main application using CardLayout for different views
 public class AlgorithmVisualizerApp {
@@ -468,7 +470,9 @@ class AlgorithmVizualizerPanel extends JPanel {
                     alg.BFS();
                 } else if (currAlg == 1) {
                     alg.DFS();
-                } // else if (currAlg == 2) { TD: A* implementation  }
+                } else if (currAlg == 2) {
+                	alg.AStar();
+                }
             }
             try {
                 Thread.sleep(10);
@@ -747,5 +751,105 @@ class AlgorithmVizualizerPanel extends JPanel {
             }
             solving = false;
         }
+        
+        public void AStar() {
+            if (startX < 0 || startY < 0 || endX < 0 || endY < 0) {
+                return;
+            }
+            // gScore holds current best cost to start
+            int[][] gScore = new int[cells][cells];
+            for (int i = 0; i < cells; i++) {
+                for (int j = 0; j < cells; j++) {
+                    gScore[i][j] = Integer.MAX_VALUE;
+                }
+            }
+
+            // openSet f = g + h
+            PriorityQueue<Node> openSet = new PriorityQueue<>(
+                Comparator.comparingInt(n -> n.getHops()
+                    + Math.abs(n.getX() - endX)
+                    + Math.abs(n.getY() - endY))
+            );
+
+            // initialize
+            Node start = map[startX][startY];
+            gScore[startX][startY] = 0;
+            start.setHops(0);
+            openSet.add(start);
+
+            boolean found = false;
+
+            while (!openSet.isEmpty() && !found && solving) {
+                Node current = openSet.poll();
+                int x = current.getX(), y = current.getY();
+
+                // skip any stale entries
+                if (current.getHops() > gScore[x][y]) continue;
+
+                // if round the end node break
+                if (x == endX && y == endY) {
+                    found = true;
+                    break;
+                }
+
+                // mark as visited and update map 
+                if (current.getType() != 0 && current.getType() != 1) {
+                    current.setType(4);
+                    update();
+                    delay();
+                }
+
+                // explore neighbors
+                for (int i = 0; i < 4; i++) {
+                    if (!solving) break;
+                    int nx = x + dRow[i], ny = y + dCol[i];
+                    if (nx < 0 || nx >= cells || ny < 0 || ny >= cells) continue;
+
+                    Node neighbor = map[nx][ny];
+                    // skip walls, visited or path nodes
+                    if (neighbor.getType() == 2 ||
+                        neighbor.getType() == 4 ||
+                        neighbor.getType() == 5) continue;
+
+                    int tentativeG = gScore[x][y] + 1;
+                    if (tentativeG < gScore[nx][ny]) {
+                        // Find Better Path
+                        neighbor.setLastNode(x, y);
+                        gScore[nx][ny] = tentativeG;
+                        neighbor.setHops(tentativeG);
+                        openSet.add(neighbor);
+
+                        // update map
+                        if (neighbor.getType() != 0 && neighbor.getType() != 1) {
+                            neighbor.setType(4);
+                            update();
+                            delay();
+                        }
+                    }
+                }
+            }
+
+            // if no path found exit
+            if (!solving || !found) {
+                solving = false;
+                return;
+            }
+
+            // Find path back to start
+            int px = endX, py = endY;
+            while (!(px == startX && py == startY) && solving) {
+                Node node = map[px][py];
+                int lx = node.getLastX(), ly = node.getLastY();
+                px = lx; py = ly;
+                if (!(px == startX && py == startY) &&
+                    !(px == endX && py == endY)) {
+                    map[px][py].setType(5);
+                }
+                update();
+                delay();
+            }
+            solving = false;
+        }
+        
     }
 }
