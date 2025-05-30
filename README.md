@@ -3,9 +3,10 @@ Welcome to Algorithm Visualizer, a Java-based GUI application that helps underst
 
 ## Features:
 Visualize the step-by-step process of:  
-BFS (Breadth-First Search)  
-DFS (Depth-First Search)  
-(Planned: A* Algorithm, Dijkstras Algorithm)  
+BFS   
+DFS  
+A*  
+(Planned: Dijkstras Algorithm)  
 
 ## Create customizable maps with:  
 Start node  
@@ -20,10 +21,6 @@ Swing for GUI
 Object-oriented design  
 
 ## Planned Features  
-A* Pathfinding algorithm  
-Adjustable speed for visualization  
-Adjustable grid size  
-Maze generation tool  
 Sorting Algorithm Vizualization  
 
 ## Getting Started  
