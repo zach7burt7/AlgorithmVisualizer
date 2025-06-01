@@ -10,6 +10,7 @@ import javax.swing.event.ChangeListener;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -95,22 +96,118 @@ class HomePanel extends JPanel {
 
 // Sorting Page
 class SortingPanel extends JPanel {
-    private AlgorithmVisualizerApp app;
+	  private static final int SIZE = 60;
+	    private static final int WIDTH = 1185;      // match pathfinding WIDTH
+	    private static final int TITLE_HEIGHT = 50;
+	    private static final int CONTROL_HEIGHT = 90;
 
-    public SortingPanel(AlgorithmVisualizerApp app) {
-        this.app = app;
-        setLayout(new BorderLayout());
+	    private final AlgorithmVisualizerApp app;
+	    private int[] array = new int[SIZE];
 
-        JLabel label = new JLabel("Sorting Visualizer (Coming Soon)", JLabel.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 32));
-        add(label, BorderLayout.CENTER);
+	    // UI components
+	    private JPanel titlePanel;
+	    private JPanel controlPanel;
+	    private JPanel drawPanel;
+	    private final JButton homeButton = new JButton("Home");
+	    private final JButton shuffleButton = new JButton("Shuffle");
 
-        JButton backButton = new JButton("Back to Home");
-        backButton.addActionListener(e -> app.showCard(AlgorithmVisualizerApp.HOME_CARD));
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.add(backButton);
-        add(bottomPanel, BorderLayout.SOUTH);
-    }
+
+	    public SortingPanel(AlgorithmVisualizerApp app) {
+	        this.app = app;
+	        setLayout(null);
+
+	        initArray(); 
+
+	        // Create title area
+	        titlePanel = new JPanel(new BorderLayout());
+	        titlePanel.setBounds(0, 0, WIDTH, TITLE_HEIGHT);
+
+	        titlePanel.add(Box.createRigidArea(new Dimension(80, 0)), BorderLayout.LINE_END);
+
+	        // Align title label
+	        JLabel title = new JLabel("Sorting Visualizer");
+	        title.setHorizontalAlignment(SwingConstants.CENTER);
+	        title.setFont(new Font("Arial", Font.BOLD, 24));
+	        titlePanel.add(title, BorderLayout.CENTER);
+
+	        // Add home button to title panel
+	        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
+	        buttonWrapper.setOpaque(false);
+	        homeButton.setPreferredSize(new Dimension(80, 30));
+	        homeButton.addActionListener(e -> app.showCard(AlgorithmVisualizerApp.HOME_CARD));
+	        buttonWrapper.add(homeButton);
+	        titlePanel.add(buttonWrapper, BorderLayout.LINE_START);
+
+	        add(titlePanel);
+
+
+	        // Create control panel
+	        controlPanel = new JPanel();
+	        controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+	        controlPanel.setBounds(0, TITLE_HEIGHT, WIDTH, CONTROL_HEIGHT);
+	        controlPanel.setBorder(BorderFactory.createTitledBorder(
+	            BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), ""
+	        ));
+
+	        // Shuffle Button
+	        shuffleButton.setPreferredSize(new Dimension(100, 30));
+	        shuffleButton.addActionListener(e -> resetArray());
+	        controlPanel.add(shuffleButton);
+
+
+	        add(controlPanel);
+
+
+	        // Create main panel
+	        drawPanel = new JPanel() {
+	            @Override
+	            protected void paintComponent(Graphics g) {
+	                super.paintComponent(g);
+	                drawArray(g);
+	            }
+	        };
+	        drawPanel.setBackground(Color.WHITE);
+
+	        int drawY = TITLE_HEIGHT + CONTROL_HEIGHT;
+	        drawPanel.setBounds(0, drawY, WIDTH, getPreferredSize().height - drawY);
+	        add(drawPanel);
+	    }
+
+	    @Override
+	    public Dimension getPreferredSize() {
+	        return new Dimension(WIDTH, 800);
+	    }
+
+	    private void initArray() {
+	        Random rnd = new Random();
+	        for (int i = 0; i < SIZE; i++) {
+	            array[i] = rnd.nextInt(100) + 1;
+	        }
+	    }
+
+	    private void drawArray(Graphics g) {
+	        int w = drawPanel.getWidth();
+	        int fullH = drawPanel.getHeight();
+	        if (w == 0 || fullH == 0) return;
+
+	        double hScale = fullH / 1.3;
+	        int barWidth = w / SIZE;
+	        int maxVal = Arrays.stream(array).max().orElse(1);
+
+	        for (int i = 0; i < SIZE; i++) {
+	            int val = array[i];
+	            int barHeight = (int) ((val / (double) maxVal) * hScale);
+	            int x = i * barWidth;
+	            int y = 0; 
+	            g.setColor(Color.BLUE);
+	            g.fillRect(x + 25, y, barWidth - 2, barHeight);
+	        }
+	    }
+
+	    private void resetArray() {
+	        initArray();
+	        drawPanel.repaint();
+	    }
 }
 
 // Pathfinding Page
@@ -179,7 +276,7 @@ class AlgorithmVizualizerPanel extends JPanel {
         titlePanel.setLayout(new BorderLayout());
         titlePanel.setBounds(0, 0, WIDTH, 50);
         titlePanel.add(Box.createRigidArea(new Dimension(80, 0)), BorderLayout.LINE_END);
-        JLabel title = new JLabel("Algorithm Visualizer");
+        JLabel title = new JLabel("Pathfinding Visualizer");
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24)); 
         
