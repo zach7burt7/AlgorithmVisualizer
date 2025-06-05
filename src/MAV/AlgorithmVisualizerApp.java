@@ -97,12 +97,16 @@ class HomePanel extends JPanel {
 // Sorting Page
 class SortingPanel extends JPanel {
 	  private static final int SIZE = 60;
-	    private static final int WIDTH = 1185;      // match pathfinding WIDTH
+	    private static final int WIDTH = 1185;    
 	    private static final int TITLE_HEIGHT = 50;
 	    private static final int CONTROL_HEIGHT = 90;
 
 	    private final AlgorithmVisualizerApp app;
 	    private int[] array = new int[SIZE];
+	    private int currAlg = 0;
+	    private boolean solving = false;
+	    //Lists
+	    private String[] sortingAlgorithms = {"Merge Sort", "Quick Sort", "Bubble Sort"};
 
 	    // UI components
 	    private JPanel titlePanel;
@@ -110,6 +114,10 @@ class SortingPanel extends JPanel {
 	    private JPanel drawPanel;
 	    private final JButton homeButton = new JButton("Home");
 	    private final JButton shuffleButton = new JButton("Shuffle");
+	    private final JButton startSortingAlgorithmButton = new JButton("Start Sort");
+	    private JComboBox<String> sortingToolsDropDownMenu = new JComboBox<>(sortingAlgorithms);
+	    
+
 
 
 	    public SortingPanel(AlgorithmVisualizerApp app) {
@@ -149,11 +157,33 @@ class SortingPanel extends JPanel {
 	            BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), ""
 	        ));
 
+	        // Start sort
+	        startSortingAlgorithmButton.setPreferredSize(new Dimension(100, 30));
+	        startSortingAlgorithmButton.addActionListener(e -> {
+	        	
+	        	
+	        }
+	      
+);
+	        controlPanel.add(startSortingAlgorithmButton);
+	        
+	        
 	        // Shuffle Button
 	        shuffleButton.setPreferredSize(new Dimension(100, 30));
 	        shuffleButton.addActionListener(e -> resetArray());
 	        controlPanel.add(shuffleButton);
-
+	        
+	        
+	        // Sorting Algorithm Drop Down Menu
+	        controlPanel.add(sortingToolsDropDownMenu);
+	        sortingToolsDropDownMenu.addItemListener(new ItemListener() {
+				
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					currAlg = sortingToolsDropDownMenu.getSelectedIndex();
+					
+				}
+			});
 
 	        add(controlPanel);
 
@@ -254,6 +284,7 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JButton resetButton = new JButton("Reset Map");
     private JButton homeButton = new JButton("Home");
     private JButton generateMazeButton = new JButton("Generate Maze");
+    private JButton clearButton = new JButton("Clear");
     private JSlider mapDensitySlider = new JSlider(1, 7, 4);
     private JSlider mazeDensitySlider = new JSlider(1, 5, 3);
     private JSlider searchSpeedSlider = new JSlider(1, 5, 3);
@@ -296,6 +327,7 @@ class AlgorithmVizualizerPanel extends JPanel {
         controlPanel.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), ""));
         controlPanel.add(startAlgButton);
+        controlPanel.add(clearButton);
         controlPanel.add(resetButton);
         controlPanel.add(generateMazeButton);
         controlPanel.add(toolDropDownMenu);
@@ -380,6 +412,18 @@ class AlgorithmVizualizerPanel extends JPanel {
                     solving = true;
             }
         });
+        
+        clearButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				solving = false;
+				clear();
+				update(); 
+			}
+
+		
+		});
 
         resetButton.addActionListener(new ActionListener() {
             @Override
@@ -454,6 +498,18 @@ class AlgorithmVizualizerPanel extends JPanel {
             }
         }
         reset();
+    }
+    
+    private void clear() {
+        for (int x = 0; x < cells; x++) {
+            for (int y = 0; y < cells; y++) {
+                int type = map[x][y].getType();
+                if (type == 4 || type == 5) {
+                    map[x][y] = new Node(3, x, y);
+                }
+            }
+        }
+        
     }
     
     public void generateMapp(double density) {
@@ -947,6 +1003,8 @@ class AlgorithmVizualizerPanel extends JPanel {
             }
             solving = false;
         }
+        
+      
         
     }
 }
