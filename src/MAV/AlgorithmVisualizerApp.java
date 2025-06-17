@@ -106,7 +106,7 @@ class SortingPanel extends JPanel {
 	    private int currAlg = 0;
 	    private boolean solving = false;
 	    //Lists
-	    private String[] sortingAlgorithms = {"Merge Sort", "Quick Sort", "Bubble Sort"};
+	    private String[] sortingAlgorithms = {"Bubble Sort", "Quick Sort", "Merge Sort"};
 
 	    // UI components
 	    private JPanel titlePanel;
@@ -160,11 +160,20 @@ class SortingPanel extends JPanel {
 	        // Start sort
 	        startSortingAlgorithmButton.setPreferredSize(new Dimension(100, 30));
 	        startSortingAlgorithmButton.addActionListener(e -> {
-	        	
-	        	
-	        }
+	        	  if (solving) return; 
+	        	  new Thread(() -> {
+	        	    switch (currAlg) {
+	        	      case 0: bubbleSort();        
+	        	      	break;
+	        	      case 1: 
+	        	    	break;
+	        	      case 2:
+	        	    	break;
+	        	    }
+	        	  }).start();
+	        	});
 	      
-);
+
 	        controlPanel.add(startSortingAlgorithmButton);
 	        
 	        
@@ -238,6 +247,34 @@ class SortingPanel extends JPanel {
 	        initArray();
 	        drawPanel.repaint();
 	    }
+	    
+	    public void delay() {
+	        try {
+	            Thread.sleep(5);
+	        } catch (Exception e) { }
+	    }
+	    
+	    public void update() {
+	        repaint();
+	    }
+	    
+	    private void bubbleSort() {
+	    	  solving = true;
+	    	  int n = array.length;
+	    	  for (int i = 0; i < n - 1 && solving; i++) {
+	    	    for (int j = 0; j < n - i - 1 && solving; j++) {
+	    	      if (array[j] > array[j + 1]) {
+	    	        // swap
+	    	        int tmp = array[j];
+	    	        array[j] = array[j + 1];
+	    	        array[j + 1] = tmp;
+	    	        update();
+	    	        delay();
+	    	      }
+	    	    }
+	    	  }
+	    	  solving = false;
+	    	}
 }
 
 // Pathfinding Page
@@ -284,7 +321,7 @@ class AlgorithmVizualizerPanel extends JPanel {
     private JButton resetButton = new JButton("Reset Map");
     private JButton homeButton = new JButton("Home");
     private JButton generateMazeButton = new JButton("Generate Maze");
-    private JButton clearButton = new JButton("Clear");
+    private JButton clearButton = new JButton("Clear Search");
     private JSlider mapDensitySlider = new JSlider(1, 7, 4);
     private JSlider mazeDensitySlider = new JSlider(1, 5, 3);
     private JSlider searchSpeedSlider = new JSlider(1, 5, 3);
