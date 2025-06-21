@@ -3,6 +3,8 @@
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -96,7 +98,7 @@ class HomePanel extends JPanel {
 
 // Sorting Page
 class SortingPanel extends JPanel {
-	  private static final int SIZE = 60;
+	  private static final int SIZE = 100;
 	    private static final int WIDTH = 1185;    
 	    private static final int TITLE_HEIGHT = 50;
 	    private static final int CONTROL_HEIGHT = 90;
@@ -106,7 +108,7 @@ class SortingPanel extends JPanel {
 	    private int currAlg = 0;
 	    private boolean solving = false;
 	    //Lists
-	    private String[] sortingAlgorithms = {"Bubble Sort", "Quick Sort", "Merge Sort"};
+	    private String[] sortingAlgorithms = {"Bubble Sort", "Merge Sort", "Quick Sort"};
 
 	    // UI components
 	    private JPanel titlePanel;
@@ -165,7 +167,7 @@ class SortingPanel extends JPanel {
 	        	    switch (currAlg) {
 	        	      case 0: bubbleSort();        
 	        	      	break;
-	        	      case 1: 
+	        	      case 1: startMergeSort();
 	        	    	break;
 	        	      case 2:
 	        	    	break;
@@ -179,7 +181,10 @@ class SortingPanel extends JPanel {
 	        
 	        // Shuffle Button
 	        shuffleButton.setPreferredSize(new Dimension(100, 30));
-	        shuffleButton.addActionListener(e -> resetArray());
+	        shuffleButton.addActionListener(e -> {
+	            solving = false;
+	            resetArray();
+	        });
 	        controlPanel.add(shuffleButton);
 	        
 	        
@@ -223,26 +228,32 @@ class SortingPanel extends JPanel {
 	            array[i] = rnd.nextInt(100) + 1;
 	        }
 	    }
-
 	    private void drawArray(Graphics g) {
 	        int w = drawPanel.getWidth();
-	        int fullH = drawPanel.getHeight();
-	        if (w == 0 || fullH == 0) return;
+	        int h = drawPanel.getHeight();
+	        int n = array.length;
+	        if (w <= 0 || h <= 0 || n == 0) return;
 
-	        double hScale = fullH / 1.3;
-	        int barWidth = w / SIZE;
-	        int maxVal = Arrays.stream(array).max().orElse(1);
+	        Graphics2D g2 = (Graphics2D) g;
+	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+	                            RenderingHints.VALUE_ANTIALIAS_ON);
 
-	        for (int i = 0; i < SIZE; i++) {
-	            int val = array[i];
-	            int barHeight = (int) ((val / (double) maxVal) * hScale);
-	            int x = i * barWidth;
-	            int y = 0; 
+	        double cellWidth = (double) w / n;
+	        double yScale    = (double) h / Arrays.stream(array).max().orElse(1);
+
+	        double gap = 0.5; 
+	        for (int i = 0; i < n; i++) {
+	            double val = array[i];
+	            double x1  = i * cellWidth + gap;
+	            double barW = cellWidth - 2 * gap;
+	            double barH = val * yScale;
+	            double y   = h - barH;
+
+	            // draw a sub-pixel rectangle
 	            g.setColor(Color.BLUE);
-	            g.fillRect(x + 25, y, barWidth - 2, barHeight);
+	            g2.fill(new Rectangle2D.Double(x1, y, barW, barH));
 	        }
 	    }
-
 	    private void resetArray() {
 	        initArray();
 	        drawPanel.repaint();
@@ -275,6 +286,67 @@ class SortingPanel extends JPanel {
 	    	  }
 	    	  solving = false;
 	    	}
+	    //Start merge sort  size of global array size
+	    private void startMergeSort() {
+	        solving = true;
+	        mergeSort(0, array.length - 1);
+	        solving = false;
+	    }
+	    
+	    //Recursive merge sort implementation
+	    private void mergeSort(int left, int right) {
+	        if (!solving) return;
+	        if (left >= right) return;
+
+	        int mid = left + (right - left) / 2;
+
+	        mergeSort(left, mid);
+	        mergeSort(mid + 1, right);
+	        merge(left, mid, right);
+	    }
+	    //merge both halves.
+	    private void merge(int left, int mid, int right) {
+	        int n1 = mid - left + 1;
+	        int n2 = right - mid;
+
+	        int[] L = new int[n1];
+	        int[] R = new int[n2];
+
+	        for (int i = 0; i < n1; ++i)
+	            L[i] = array[left + i];
+	        for (int j = 0; j < n2; ++j)
+	            R[j] = array[mid + 1 + j];
+
+	        int i = 0, j = 0, k = left;
+	        while (i < n1 && j < n2) {
+	            if (L[i] <= R[j]) {
+	                array[k] = L[i];
+	                i++;
+	            } else {
+	                array[k] = R[j];
+	                j++;
+	            }
+	            k++;
+	            update();
+	            delay();
+	        }
+
+	        while (i < n1) {
+	            array[k] = L[i];
+	            i++;
+	            k++;
+	            update();
+	            delay();
+	        }
+
+	        while (j < n2) {
+	            array[k] = R[j];
+	            j++;
+	            k++;
+	            update();
+	            delay();
+	        }
+	    }
 }
 
 // Pathfinding Page
