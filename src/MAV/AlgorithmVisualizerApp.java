@@ -39,6 +39,7 @@ public class AlgorithmVisualizerApp {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 800);
         frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
 
         // CardLayout container
         cardLayout = new CardLayout();
@@ -79,7 +80,7 @@ class HomePanel extends JPanel {
         this.app = app;
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Welcome to Algorithm Visualizer", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("Welcome to Zach's Algorithm Visualizer", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
         add(titleLabel, BorderLayout.NORTH);
 
