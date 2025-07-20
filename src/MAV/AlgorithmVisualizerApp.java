@@ -170,7 +170,7 @@ class SortingPanel extends JPanel {
 	        	      	break;
 	        	      case 1: startMergeSort();
 	        	    	break;
-	        	      case 2:
+	        	      case 2: startQuickSort();
 	        	    	break;
 	        	    }
 	        	  }).start();
@@ -307,20 +307,23 @@ class SortingPanel extends JPanel {
 	    }
 	    //merge both halves.
 	    private void merge(int left, int mid, int right) {
+	    	 if (!solving) return;
 	        int n1 = mid - left + 1;
 	        int n2 = right - mid;
 
 	        int[] L = new int[n1];
 	        int[] R = new int[n2];
 
-	        for (int i = 0; i < n1; ++i)
+	        for (int i = 0; i < n1; ++i )
 	            L[i] = array[left + i];
 	        for (int j = 0; j < n2; ++j)
 	            R[j] = array[mid + 1 + j];
 
 	        int i = 0, j = 0, k = left;
-	        while (i < n1 && j < n2) {
-	            if (L[i] <= R[j]) {
+	        
+	        while (i < n1 && j < n2 && solving) {
+	        	
+	            if (L[i] <= R[j] ) {
 	                array[k] = L[i];
 	                i++;
 	            } else {
@@ -332,7 +335,7 @@ class SortingPanel extends JPanel {
 	            delay();
 	        }
 
-	        while (i < n1) {
+	        while (i < n1 && solving) {
 	            array[k] = L[i];
 	            i++;
 	            k++;
@@ -340,13 +343,56 @@ class SortingPanel extends JPanel {
 	            delay();
 	        }
 
-	        while (j < n2) {
+	        while (j < n2 && solving) {
 	            array[k] = R[j];
 	            j++;
 	            k++;
 	            update();
 	            delay();
 	        }
+	    }
+	    
+	    public void startQuickSort() {
+	    	solving = true;
+	    	quickSort(0, array.length - 1);
+	    	solving = false;
+	    }
+	    
+	    
+	    public void quickSort(int low, int high) {
+	        if (!solving || low >= high) return;
+
+	        int pivot = array[high];
+	        int left = low, right = high;
+
+	        while (left < right && solving) {
+	        	
+	            while (left < right && array[left] <= pivot && solving) {
+	                left++;
+	                update(); delay();
+	            }
+	            
+	            while (left < right && array[right] >= pivot && solving) {
+	                right--;
+	                update(); delay();
+	            }
+	            if (!solving) break;
+	            swap(array, left, right);
+	            update(); delay();
+	        }
+
+	        if (!solving) return;
+	        swap(array, left, high);
+	        update(); delay();
+
+	        quickSort(low, left - 1);
+	        quickSort(left + 1, high);
+	    }
+	    
+	    public void swap(int[] arr, int index1, int index2) {
+	    	int temp = arr[index1];
+	    	arr[index1] = arr[index2];
+	    	arr[index2] = temp;
 	    }
 }
 
