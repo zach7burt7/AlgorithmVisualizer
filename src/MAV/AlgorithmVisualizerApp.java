@@ -20,6 +20,7 @@ import java.util.Random;
 import java.util.Stack;
 import java.util.PriorityQueue;
 import java.util.Comparator;
+import java.util.EventListener;
 
 // Main application using CardLayout for different views
 public class AlgorithmVisualizerApp {
@@ -34,6 +35,7 @@ public class AlgorithmVisualizerApp {
     private CardLayout cardLayout;
 
     public AlgorithmVisualizerApp() {
+    	try {
         // Main Frame
         frame = new JFrame("Algorithm Visualizer App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,6 +62,9 @@ public class AlgorithmVisualizerApp {
         // Add the main panel to the frame and display it
         frame.add(mainPanel);
         frame.setVisible(true);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
     }
 
     // Method to switch views
@@ -68,7 +73,14 @@ public class AlgorithmVisualizerApp {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AlgorithmVisualizerApp());
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            System.err.println("Uncaught exception in thread " + thread.getName());
+            throwable.printStackTrace();
+        });
+
+        SwingUtilities.invokeLater(() -> {
+            new AlgorithmVisualizerApp();
+        });
     }
 }
 
@@ -99,16 +111,16 @@ class HomePanel extends JPanel {
 
 // Sorting Page
 class SortingPanel extends JPanel {
-	  private static final int SIZE = 100;
 	    private static final int WIDTH = 1185;    
 	    private static final int TITLE_HEIGHT = 50;
 	    private static final int CONTROL_HEIGHT = 90;
-
+	    private int arraySize = 200;
 	    private final AlgorithmVisualizerApp app;
-	    private int[] array = new int[SIZE];
+	    private int[] array = new int[arraySize];
 	    private int currAlg = 0;
 	    private boolean solving = false;
 	    //Lists
+	  
 	    private String[] sortingAlgorithms = {"Bubble Sort", "Merge Sort", "Quick Sort"};
 
 	    // UI components
@@ -119,7 +131,8 @@ class SortingPanel extends JPanel {
 	    private final JButton shuffleButton = new JButton("Shuffle");
 	    private final JButton startSortingAlgorithmButton = new JButton("Start Sort");
 	    private JComboBox<String> sortingToolsDropDownMenu = new JComboBox<>(sortingAlgorithms);
-	    
+	    private JSlider arraySizeSlider = new JSlider(50, 350, 200);
+	    private JLabel arraySizeLabel = new JLabel(arraySize + "");
 
 
 
@@ -199,7 +212,34 @@ class SortingPanel extends JPanel {
 					
 				}
 			});
-
+	        
+	        arraySizeSlider.addChangeListener(new ChangeListener() {
+	            @Override
+	            public void stateChanged(ChangeEvent e) {
+	            	solving = false;
+	                arraySize = arraySizeSlider.getValue(); 
+	                arraySizeLabel.setText(arraySize + "");
+	                initArray();
+	                update();
+	           
+	     
+	            }
+	        });
+	        
+	        // Array Size Slider 
+	        arraySizeSlider.setMajorTickSpacing(10);
+	        JPanel arraySizePanel = new JPanel();
+	        arraySizePanel.setPreferredSize(new Dimension(100, 50));
+	        arraySizePanel.setLayout(new BoxLayout(arraySizePanel, BoxLayout.Y_AXIS));
+	        JLabel arraySizeTitle = new JLabel("Array Size");
+	        arraySizeTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        arraySizeSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        arraySizeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        arraySizePanel.add(arraySizeTitle);
+	        arraySizePanel.add(arraySizeSlider);
+	        arraySizePanel.add(arraySizeLabel);
+	        
+	        controlPanel.add(arraySizePanel);
 	        add(controlPanel);
 
 
@@ -225,7 +265,8 @@ class SortingPanel extends JPanel {
 
 	    private void initArray() {
 	        Random rnd = new Random();
-	        for (int i = 0; i < SIZE; i++) {
+	        array = new int[arraySize]; 
+	        for (int i = 0; i < arraySize; i++) {
 	            array[i] = rnd.nextInt(100) + 1;
 	        }
 	    }
