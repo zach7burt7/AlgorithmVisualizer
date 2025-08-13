@@ -11,7 +11,7 @@ Welcome to Zach's Algorithm Visualizer, a Java-based GUI application that helps 
 ## Features:
 Visualize the step-by-step process of:  
 Breadth-First Search  
-Depth-First Search
+Depth-First Search  
 A*  
 Bubble Sort  
 Merge Sort  
