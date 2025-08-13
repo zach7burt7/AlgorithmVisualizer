@@ -4,10 +4,10 @@ Welcome to Zach's Algorithm Visualizer, a Java-based GUI application that helps 
 ## 📊 Algorithm Previews  
 
 ### Pathfinding  
-![Pathfinding Visualization](assets/pathfinding.gif)
+![Pathfinding Visualization](assets/Pathfinding.gif)
 
 ### Sorting  
-![Sorting Visualization](assets/sorting.gif)
+![Sorting Visualization](assets/Sorting.gif)
 
 ## Features:
 Visualize the step-by-step process of:  
