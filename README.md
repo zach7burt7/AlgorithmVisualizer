@@ -1,18 +1,21 @@
 # PathfindingAlgoirthmVizualizer
-Welcome to Algorithm Visualizer, a Java-based GUI application that helps understand and visualize pathfinding, and eventually sorting algorithms. This project is built using Swing and designed to offer an interactive learning experience for students.
+Welcome to Zach's Algorithm Visualizer, a Java-based GUI application that helps understand and visualize pathfinding, and eventually sorting algorithms. This project is built using Swing and designed to offer an interactive visualization experience for students, or anyone interested in algorithm design.  
 
 ## Features:
 Visualize the step-by-step process of:  
-BFS   
-DFS  
+Breadth-First Search  
+Depth-First Search
 A*  
-(Planned: Dijkstras Algorithm)  
+Bubble Sort  
+Merge Sort  
+Quick Sort  
+
 
 ## Create customizable maps with:  
 Start node  
 End node  
 Walls  
-Adjustable grid and responsive controls  
+Responsive Controls 
 User-friendly GUI built with Java Swing  
 
 ## Technologies  
@@ -21,7 +24,9 @@ Swing for GUI
 Object-oriented design  
 
 ## Planned Features  
-Sorting Algorithm Vizualization  
+Heap Sort  
+Shell Sort  
+Cocktail Shaker Sort  
 
 ## Getting Started  
 Make sure you have:  
