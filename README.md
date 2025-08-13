@@ -1,13 +1,12 @@
 # PathfindingAlgoirthmVizualizer
 Welcome to Zach's Algorithm Visualizer, a Java-based GUI application that helps understand and visualize pathfinding, and eventually sorting algorithms. This project is built using Swing and designed to offer an interactive visualization experience for students, or anyone interested in algorithm design.  
 
-## 📊 Algorithm Previews  
+## Algorithm Previews  
 
-### Pathfinding  
-![Pathfinding Visualization](assets/Pathfinding.gif)
-
-### Sorting  
-![Sorting Visualization](assets/Sorting.gif)
+<p align="center">
+  <img src="assets/Pathfinding.gif" alt="Pathfinding Visualization" width="45%" />
+  <img src="assets/Sorting.gif" alt="Sorting Visualization" width="45%" />
+</p>
 
 ## Features:
 Visualize the step-by-step process of:  
