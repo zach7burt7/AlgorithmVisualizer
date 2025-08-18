@@ -9,7 +9,7 @@ Welcome to Zach's Algorithm Visualizer, a Java-based GUI application that helps 
 </p>
 
 ## Features:
-Visualize the step-by-step process of:  
+#### Visualize the step-by-step process of:  
 Breadth-First Search  
 Depth-First Search  
 A*  
@@ -36,7 +36,7 @@ Shell Sort
 Cocktail Shaker Sort  
 
 ## Getting Started  
-Make sure you have:  
+#### Make sure you have:  
 Java JDK 8 or later  
 An IDE (like IntelliJ IDEA, Eclipse)  
 Git: `https://git-scm.com/downloads`  
