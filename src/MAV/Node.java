@@ -1,3 +1,5 @@
+package MAV;
+
 //Node Class to Represent each square of the grid. Each node is given a type and X and Y position
 class Node {
     private int cellType;

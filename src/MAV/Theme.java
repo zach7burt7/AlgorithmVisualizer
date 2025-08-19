@@ -1,3 +1,5 @@
+package MAV;
+
 import java.awt.*;
 
 public final class Theme {

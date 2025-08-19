@@ -1,3 +1,5 @@
+package MAV;
+
 //Pathfinding Page
 
 import java.awt.BorderLayout;
@@ -154,7 +156,11 @@ class PathfindingPanel extends JPanel {
      generateMazeButton.setBackground(Theme.PRIMARY_BG);
      generateMazeButton.setForeground(Theme.BTN_TEXT);
      generateMazeButton.setFocusPainted(false);
-     generateMazeButton.addActionListener(e -> { generateMapp(density); update(); });
+     generateMazeButton.addActionListener(e -> {
+    	    new Thread(() -> {
+    	        generateMaze();
+    	    }).start();
+    	});
      controlPanel.add(generateMazeButton);
 
      // Tools
@@ -403,71 +409,56 @@ class PathfindingPanel extends JPanel {
      }
  }
  
- private void carveMaze(int x, int y) {
-     if (map[x][y].getType() != 0 && map[x][y].getType() != 1) {
-         map[x][y].setType(2); // Path
-     }
-
-     int[] dirX = {0, 0, -1, 1};
-     int[] dirY = {-1, 1, 0, 0};
-
-     List<Integer> shuffled = new ArrayList<>();
-     shuffled.add(0);
-     shuffled.add(1);
-     shuffled.add(2);
-     shuffled.add(3);
-     Collections.shuffle(shuffled);
-
-     for (int dir : shuffled) {
-         int nx = x + dirX[dir] * 2;
-         int ny = y + dirY[dir] * 2;
-
-         if (nx > 0 && ny > 0 && nx < cells - 1 && ny < cells - 1) {
-             if (map[nx][ny].getType() == 3) {
-                 int wallX = x + dirX[dir];
-                 int wallY = y + dirY[dir];
-
-                 if (map[wallX][wallY].getType() != 0 && map[wallX][wallY].getType() != 1) {
-                     map[wallX][wallY].setType(2); // Carve tunnel
-
-                 }
-
-                 carveMaze(nx, ny);
-             }
-         }
-     }
- }
+ 
 
  
- public void generateMap() {
-     clearMap();
+ public void generateMaze() {
+	    // make all cells walls
+	    for (int i = 0; i < cells; i++) {
+	        for (int j = 0; j < cells; j++) {
+	            map[i][j].setType(2);
+	        }
+	    }
+	    
+	    Stack<Node> stack = new Stack<>();
+	    Node curr = map[1][1];
+	    curr.setType(3);
+	    stack.push(curr);
+	    update();
+	    delay();
 
-     // Fill map with walls first
-     for (int x = 0; x < cells; x++) {
-         for (int y = 0; y < cells; y++) {
-             int type = map[x][y].getType();
-             if (type != 0 && type != 1) {
-                 map[x][y].setType(3); // Wall
-             }
-         }
-     }
+	    while (!stack.isEmpty()) {
+	        curr = stack.peek();
+	        int x = curr.getX();
+	        int y = curr.getY();
 
-     // Start carving maze from a random odd cell
-     Random rand = new Random();
-     int startX = rand.nextInt(cells / 2) * 2 + 1;
-     int startY = rand.nextInt(cells / 2) * 2 + 1;
-     
-     // Make sure it's not the start or end
-     if (map[startX][startY].getType() == 0 || map[startX][startY].getType() == 1) {
-         startX = 1;
-         startY = 1;
-     }
+	        List<Node> neighbors = new ArrayList<>();
+	        int[][] dirs = {{2,0}, {-2,0}, {0,2}, {0,-2}};
+	        for (int[] d : dirs) {
+	            int nx = x + d[0], ny = y + d[1];
+	            if (nx > 0 && nx < cells-1 && ny > 0 && ny < cells-1) {
+	                if (map[nx][ny].getType() == 2) {
+	                    neighbors.add(map[nx][ny]);
+	                }
+	            }
+	        }
 
-     carveMaze(startX, startY);
+	        if (!neighbors.isEmpty()) {
+	            Node next = neighbors.get(rand.nextInt(neighbors.size()));
+	            int wx = x + (next.getX() - x) / 2;
+	            int wy = y + (next.getY() - y) / 2;
+	            map[wx][wy].setType(3);
+	            next.setType(3);
+	            stack.push(next);
 
-     update(); 
-    
- }
+	            // 👇 Visualize the carving
+	            update();
+	            delay();
+	        } else {
+	            stack.pop();
+	        }
+	    }
+	}
 
  // Reset flag
  public void reset() {
@@ -524,40 +515,7 @@ class PathfindingPanel extends JPanel {
      repaint();
  }
 
- // Node Class
- class Node {
-     private int cellType;
-     private int hops, x, y, lastX, lastY;
-     private double distToEnd;
 
-     public Node(int type, int x, int y) {
-         this.cellType = type;
-         this.x = x;
-         this.y = y;
-         this.hops = -1;
-     }
-
-
-     public int getX() { return x; }
-     public int getY() { return y; }
-     public int getLastX() { return lastX; }
-     public int getLastY() { return lastY; }
-     public int getType() { return cellType; }
-     public int getHops() { return hops; }
-
-     public void setType(int type) {
-         cellType = type;
-     }
-
-     public void setLastNode(int x, int y) {
-         lastX = x;
-         lastY = y;
-     }
-
-     public void setHops(int hops) {
-         this.hops = hops;
-     }
- }
 
  // Map class handles actions on the Grid and Painting components
  class Map extends JPanel implements MouseListener, MouseMotionListener {
